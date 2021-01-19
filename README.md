@@ -1,16 +1,23 @@
-# SRE/DevOps Online Assessment
+# Solution
 
-(v1.0) The purpose of this test is to evaluate experience using Docker to containerize applications, and deploying such applications on AWS.
-
-This application (app.py) is a simple **Flask 1.1.1** server for **Python 3.7.5**. Once deployed, this Flask web application should be exposed on **port 80**. *You must not modify app.py.*
-
-Your task is to:
-
-1. read instructions / specifications and make a **public fork or clone** of this repository on **GitHub**
-2. **containerize** this application with **Docker**
-3. be sure to set the necessary **environment variables** referenced in app.py
-4. commit and include the completed **Dockerfile** in your repository, as well as any other related files
-5. deploy the wrapped application to **AWS**, in any way you choose
-6. create and commit a file in your repository named **ip.txt**, which stores *only* the **public IPv4 address** of your instance of the application on the first line, so that we may evaluate the submission quickly with the command **curl $(cat ip.txt)**.
-7. **Email / respond with your solution**, which will be:
-   * the URL of your GitHub repository, including all required files mentioned above
+1. Dockerfile added
+2. Terraform code to create ecr repository and ec2 instance to deploy the app to. It will output ecr repo url, ec2 instance's public ip and save the key pair to local.
+  ```bash
+  $ cd terraform
+  $ terraform init
+  $ terraform apply
+  ```
+3. Create an iam role with ecr access and attach to ec2 instance
+3. Build and push docker image
+  ```bash
+  $ docker build -t <Account_number>.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest .
+  $ $(aws ecr get-login --region us-east-1 --no-include-email)
+  $ docker push 794878674144.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
+  ```
+4. To deploy
+  ```bash
+  $ ssh -i ec2-flask-app.pem ubuntu@<public_ip>
+  $ $(aws ecr get-login --region us-east-1 --no-include-email)
+  $ docker run -p 80:80 -d <Account_number>.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
+  ```
+5. Test
