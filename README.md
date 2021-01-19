@@ -21,3 +21,5 @@
   $ docker run -p 80:80 -d <Account_number>.dkr.ecr.us-east-1.amazonaws.com/flask-app:latest
   ```
 5. Test
+
+  `curl $(cat ip.txt)`
